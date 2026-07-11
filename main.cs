@@ -35,7 +35,7 @@ public partial class main : Node2D
 			GD.Print($"{word} is a BLURBBED word.");	
 		}
 		if (type == 2){
-			if (score > 0){
+			if (score > 50){
 				GD.Print($"{word} PASSED: {score:F2}%");	
 			}
 			else{
