@@ -1,19 +1,22 @@
+# Needs to be converted to C# or GDscript
+# Needs to return if real word/in blurbbinary/made up, and score if made up
+
 import json, math, os
 
 def clear_terminal(): 
     os.system('cls' if os.name == 'nt' else 'clear')
 
-max_counts = [12847, 3823, 2558, 1796] # er, ing, tion, ation are the patterns most found
+max_counts = [40163, 15754, 6764, 4796] # er, ing, tion, ation are the patterns most found
 gram_weights = [5, 9, 5, 2] # bigram, trigram, quadgram, quintgram
 
-with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\wordnet_definitions.json", "r", encoding="utf-8") as f:
+with open(r"C:\Users\sethr\backup\Desktop\Blurbby\Data\english_dictionary.json", "r", encoding="utf-8") as f:
     word_definitions = json.load(f)
-with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\blurbbinary.json", "r", encoding="utf-8") as f:
+with open(r"C:\Users\sethr\backup\Desktop\Blurbby\Data\blurbbinary.json", "r", encoding="utf-8") as f:
     blurbbinary = json.load(f)
-with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\test_words.json", "r") as f:
+with open(r"C:\Users\sethr\backup\Desktop\Blurbby\Data\test_words.json", "r") as f:
     test_words = json.load(f)
 
-with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\grams.json", "r", encoding="utf-8") as f:
+with open(r"C:\Users\sethr\backup\Desktop\Blurbby\Data\grams.json", "r", encoding="utf-8") as f:
     grams_dict = json.load(f)
 
 def get_gram_scores(word):
@@ -239,7 +242,7 @@ if input("manual? (y=manual, n=from json): ").lower() == "y":
         if word not in test_words:
             test_words.append(word)
 
-            with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\test_words.json", "w") as f:
+            with open(r"C:\Users\sethr\backup\Desktop\Blurbby\Data\test_words.json", "w") as f:
                 json.dump(test_words, f, indent=4)
 
         if word in word_definitions:
