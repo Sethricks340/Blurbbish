@@ -13,23 +13,6 @@ with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\blurbbinary.json", "r", 
 with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\test_words.json", "r") as f:
     test_words = json.load(f)
 
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\bi_dict.json", "r", encoding="utf-8") as f:
-#     bi_dict = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\tri_dict.json", "r", encoding="utf-8") as f:
-#     tri_dict = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\quad_dict.json", "r", encoding="utf-8") as f:
-#     quad_dict = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\quint_dict.json", "r", encoding="utf-8") as f:
-#     quint_dict = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\bi_dict_position.json", "r", encoding="utf-8") as f:
-#     bi_dict_positions = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\tri_dict_position.json", "r", encoding="utf-8") as f:
-#     tri_dict_positions = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\quad_dict_position.json", "r", encoding="utf-8") as f:
-#     quad_dict_positions = json.load(f)
-# with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\quint_dict_position.json", "r", encoding="utf-8") as f:
-#     quint_dict_positions = json.load(f)
-
 with open(r"C:\Users\sethr\backup\Desktop\Blurbby\dicts\grams.json", "r", encoding="utf-8") as f:
     grams_dict = json.load(f)
 
