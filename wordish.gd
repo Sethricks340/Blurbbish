@@ -272,136 +272,15 @@ func wordish_score(word: String):
 
 	return max(score, 0)
 	
-func test_words_menu():
+func get_wordish(word: String):
 
-	var manual = true # Replace with UI input later
+	word = word.to_lower().strip_edges()
 
-	if manual:
+	# 0 = real word, 1 = in Blurbbinary, 2 = new word
+	if word_definitions.has(word):
+		return [0, 0]
 
-		while true:
+	if blurbbinary.has(word):
+		return [1, 0]
 
-			var word = "test" # Replace with your input method
-			word = word.to_lower().strip_edges()
-
-
-			if not test_words.has(word):
-
-				test_words.append(word)
-
-				var file = FileAccess.open(
-					"res://Data/test_words.json",
-					FileAccess.WRITE
-				)
-
-				file.store_string(
-					JSON.stringify(test_words, "\t")
-				)
-
-				file.close()
-
-
-			if word in word_definitions:
-
-				print("\nREAL WORD")
-				print(word)
-
-				for i in range(word_definitions[word].size()):
-					print(str(i + 1) + ". " + word_definitions[word][i])
-
-				continue
-
-
-			var score = wordish_score(word)
-
-			if score <= 50:
-				print("\nFAILED: %.2f" % score)
-			else:
-				print("\nPASSED: %.2f" % score)
-
-
-			var result = get_gram_scores(word)
-
-			var existing_score = result[0]
-			var frequency_score = result[1]
-			var grams = result[2]
-
-			print("z_word_score: %.2f" % zword_score(word))
-			print("existing score: %.2f" % existing_score)
-			print("frequency score: %.2f" % frequency_score)
-			print("grams: " + str(grams.keys()))
-			print("repetition penalty: %.2f" % repetition_score(grams))
-			print("triple letter penalty: %.2f" % repeated_letter_score(word))
-			print("vowel penalty: %.2f" % vowel_consonant_score(word))
-			print("gram location penalty: %.2f" % gram_locations_score(word, grams))
-
-
-	else:
-
-		var fail_words = []
-		var pass_words = []
-		var real_words = []
-		var blurbbs = []
-
-
-		for word in test_words:
-
-			if word in word_definitions:
-
-				real_words.append(word)
-
-			elif word in blurbbinary:
-
-				blurbbs.append(word)
-
-			else:
-
-				var score = wordish_score(word)
-
-				if score <= 50:
-					fail_words.append([word, score])
-				else:
-					pass_words.append([word, score])
-
-
-		print("\n")
-		print("passed words:")
-
-		pass_words.sort()
-
-		for item in pass_words:
-			print("%-20s %6.2f" % [item[0], item[1]])
-
-
-		print("\n")
-		print("failed words:")
-
-		fail_words.sort()
-
-		for item in fail_words:
-			print("%-20s %6.2f" % [item[0], item[1]])
-
-
-		print("\n")
-		print("real words:")
-
-		real_words.sort()
-
-		for word in real_words:
-
-			print(word)
-
-			for i in range(word_definitions[word].size()):
-				print(str(i + 1) + ". " + word_definitions[word][i])
-
-
-		print("\n")
-		print("blurbbs:")
-
-		blurbbs.sort()
-
-		for word in blurbbs:
-
-			print(word)
-
-			for i in range(blurbbinary[word].size()):
-				print(str(i + 1) + ". " + blurbbinary[word][i])
+	return [2, wordish_score(word)]
