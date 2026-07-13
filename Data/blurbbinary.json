@@ -1,26 +1,24 @@
 {
-    "blurbby": [
-        "a super fun game where you try to make up believable english words"
+    "blurbbish": [
+        "a super fun game where you try to make up believable english words",
+        "the language spoken by those who play blurbbish"
     ],
     "blurbbinary": [
-        "the made up dictionary for the game blurbby"
+        "the blurbbish dictionary"
     ],
     "blurbb": [
-        "a made up word in the game blurbby",
+        "a made up word in the game blurbbish",
         "to speak in blurbbish"
     ],
     "blurbbastic": [
         "fantastic"
     ],
     "blurbbo": [
-        "the mascot of blurbby",
+        "the mascot of blurbbish",
         "the engine used to detect the 'wordish' score of a blurbb"
     ], 
     "blurbbed": [
         "a real word according to the blurbbinary",
         "to speak, especially when in nonsense"
-    ],
-    "blurbbish": [
-        "the language spoken by those who play blurbby"
     ]
 }
