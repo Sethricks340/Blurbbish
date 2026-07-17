@@ -17,20 +17,31 @@ var player2_hand: Array[String] = []
 var letter_scene = preload("res://letter_tile.tscn")
 var letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 var subscripts = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"]
+var board
 var straight_row_board_scene = preload("res://straight_row_board.tscn")
+var tile_holder_offsets = [
+	Vector2(-190, -47), 
+	Vector2(-135, -47), 
+	Vector2(-80, -47), 
+	Vector2(-25, -47), 
+	Vector2(30, -47), 
+	Vector2(85, -47), 
+	Vector2(140, -47)
+]
+var on_holder = {}
 
 func _ready():
 	
-	make_board(straight_row_board_scene, Vector2(0,0))
+	make_board(straight_row_board_scene, Vector2(250,250))
 	
 	draw_bag.shuffle()
 	
-	for i in range(6):
-		var letter: String = draw_bag[i]
-		player1_hand.append(letter)
-		draw_bag.erase(letter)
-	
-	print(player1_hand)
+	#for i in range(6):
+		#var letter: String = draw_bag[i]
+		#player1_hand.append(letter)
+		#draw_bag.erase(letter)
+	#
+	#print(player1_hand)
 
 	#var test_word = "koxil"
 	var test_word = "vowt"
@@ -44,21 +55,48 @@ func _ready():
 	
 	for i in range(0, 7):
 		var random_letter = draw_bag.pick_random()
-		create_letter_tile(random_letter, Vector2((i-3)*55-25, -47) + $TileHolder.position)
+		on_holder[i]  = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
+	print(on_holder)
 	
 func create_letter_tile(text_value: String, postion: Vector2):
 	var new_tile = letter_scene.instantiate()
 	new_tile.text = text_value.to_upper()
 	new_tile.position = postion
+	new_tile.tile_released.connect(tile_released)
 	add_child(new_tile)
+	return new_tile
 	
 func make_board(board_scene: PackedScene, position: Vector2):
-	var new_board = board_scene.instantiate()
-	new_board.position = position
-	add_child(new_board)
+	board = board_scene.instantiate()
+	board.position = position
+	add_child(board)
 
 func deconstruct_wordish(word: String, type: int, score: float):
 
 	print("Word: ", word)
 	print("Type: ", type)
 	print("Score: ", score)
+
+func tile_released(tile):
+	var closest_distance = INF
+	var closest_position = null
+	
+	for offset in board.get_tile_offsets():
+		var board_position = board.global_position + offset
+		var distance = tile.global_position.distance_to(board_position)
+		
+		if distance < closest_distance:
+			closest_distance = distance
+			closest_position = board_position
+	
+	print(closest_distance)
+	if closest_distance < 40:
+		tile.global_position = closest_position
+	else:
+		return_tile_to_holder(tile)
+		
+func return_tile_to_holder(tile):
+	for index in on_holder:
+		if on_holder[index] == tile:
+			tile.global_position = tile_holder_offsets[index] + $TileHolder.global_position
+			return
