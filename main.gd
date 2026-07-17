@@ -2,7 +2,8 @@ extends Node2D
 
 var draw_bag: Array[String] = [ # "LetterPoints"
 	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
-	"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₁",
+	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
+	"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₁",	
 	"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₄",
 	"B₇","C₇","D₇","F₇","G₇","H₇","J₇","K₇","L₇","M₇","N₇","P₇","Q₇","R₇","S₇","T₇","V₇","W₇","X₇","Y₇","Z₇",
 	"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
@@ -69,6 +70,7 @@ func print_wordish(word: String, type: int, score: float):
 	print("Score: ", score)
 
 func tile_released(tile):
+	$"Result Label".text = "Score: "
 	var closest_distance = INF
 	var closest_position = null
 	
@@ -107,19 +109,18 @@ func remove_from_word(tile):
 		
 # doesn't work with the star random symbols
 func check_word_button_pressed():
-	print("scan word before: " + scan_word)
 	
 	var word = remove_trailing_underscores(scan_word)
-	print("scan word after: " + word)
 	
 	if word.contains("_") or word == "":
-		print("No word detected")
+		$"Result Label".text = "No word detected"
 	else:
 		var result = Wordish.get_wordish(word)
 		var type = result[0]
 		var score = result[1]
-		print_wordish(word, type, score)
+		$"Result Label".text = "Score: %.2f%%" % score
 		
+		#print_wordish(word, type, score)
 	
 func remove_trailing_underscores(word: String) -> String:
 	while word.begins_with("_"):

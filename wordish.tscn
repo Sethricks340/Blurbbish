@@ -41,3 +41,11 @@ offset_right = 880.0
 offset_bottom = 290.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_pdwjd")
 text = "Check word"
+
+[node name="Result Label" type="Label" parent="."]
+offset_left = 864.0
+offset_top = 352.0
+offset_right = 960.0
+offset_bottom = 440.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Score: "
