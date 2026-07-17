@@ -1,11 +1,11 @@
 extends Node2D
 
 var draw_bag: Array[String] = [ # "LetterPoints"
-	"a1","a2","a3","a4","e1","e2","e3","e4","i1","i2","i3","i4","o1","o2","o3","o4","u1","u2","u3","u4",
-	"b1","c1","d1","f1","g1","h1","j1","k1","l1","m1","n1","p1","q1","r1","s1","t1","v1","w1","x1","y1","z1",
-	"b4","c4","d4","f4","g4","h4","j4","k4","l4","m4","n4","p4","q4","r4","s4","t4","v4","w4","x4","y4","z4",
-	"b7","c7","d7","f7","g7","h7","j7","k7","l7","m7","n7","p7","q7","r7","s7","t7","v7","w7","x7","y7","z7",
-	"_rv9", "_rc9", "_rv9", "_rc9" # random vowel (includes y) 9 points, random consonant (includes y) 9 points
+	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
+	"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₁",
+	"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₄",
+	"B₇","C₇","D₇","F₇","G₇","H₇","J₇","K₇","L₇","M₇","N₇","P₇","Q₇","R₇","S₇","T₇","V₇","W₇","X₇","Y₇","Z₇",
+	"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
 ]
 var random_vowels: Array[String] = ["a", "e", "i", "o", "u", "y"]
 var random_consonants: Array[String] = [
@@ -14,8 +14,14 @@ var random_consonants: Array[String] = [
 var discard_bag: Array[String] = []
 var player1_hand: Array[String] = []
 var player2_hand: Array[String] = []
+var letter_scene = preload("res://letter_tile.tscn")
+var letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+var subscripts = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"]
+var straight_row_board_scene = preload("res://straight_row_board.tscn")
 
 func _ready():
+	
+	make_board(straight_row_board_scene, Vector2(0,0))
 	
 	draw_bag.shuffle()
 	
@@ -35,7 +41,21 @@ func _ready():
 	var score = result[1]
 	
 	deconstruct_wordish(test_word, type, score)
-
+	
+	for i in range(0, 7):
+		var random_letter = draw_bag.pick_random()
+		create_letter_tile(random_letter, Vector2((i-3)*55-25, -47) + $TileHolder.position)
+	
+func create_letter_tile(text_value: String, postion: Vector2):
+	var new_tile = letter_scene.instantiate()
+	new_tile.text = text_value.to_upper()
+	new_tile.position = postion
+	add_child(new_tile)
+	
+func make_board(board_scene: PackedScene, position: Vector2):
+	var new_board = board_scene.instantiate()
+	new_board.position = position
+	add_child(new_board)
 
 func deconstruct_wordish(word: String, type: int, score: float):
 
