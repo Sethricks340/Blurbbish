@@ -29,34 +29,25 @@ var tile_holder_offsets = [
 	Vector2(140, -47)
 ]
 var on_holder = {}
+var scan_word = "__________"
+var tile_positions = {}
+var board_offsets = []
 
 func _ready():
 	
 	make_board(straight_row_board_scene, Vector2(250,250))
-	
+	board_offsets = board.get_tile_offsets()
 	draw_bag.shuffle()
 	
-	#for i in range(6):
-		#var letter: String = draw_bag[i]
-		#player1_hand.append(letter)
-		#draw_bag.erase(letter)
-	#
-	#print(player1_hand)
-
-	#var test_word = "koxil"
-	var test_word = "vowt"
-	var random_index = randi_range(0, test_word.length() - 1)
-	test_word = test_word.substr(0, random_index) + random_consonants.pick_random() + test_word.substr(random_index + 1)
-	var result = Wordish.get_wordish(test_word)
-	var type = result[0]
-	var score = result[1]
-	
-	deconstruct_wordish(test_word, type, score)
+	$"Check Word Button".pressed.connect(check_word_button_pressed)
 	
 	for i in range(0, 7):
 		var random_letter = draw_bag.pick_random()
 		on_holder[i]  = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
-	print(on_holder)
+	
+func _process(delta):
+	#print(scan_word)
+	pass
 	
 func create_letter_tile(text_value: String, postion: Vector2):
 	var new_tile = letter_scene.instantiate()
@@ -71,7 +62,7 @@ func make_board(board_scene: PackedScene, position: Vector2):
 	board.position = position
 	add_child(board)
 
-func deconstruct_wordish(word: String, type: int, score: float):
+func print_wordish(word: String, type: int, score: float):
 
 	print("Word: ", word)
 	print("Type: ", type)
@@ -81,18 +72,25 @@ func tile_released(tile):
 	var closest_distance = INF
 	var closest_position = null
 	
-	for offset in board.get_tile_offsets():
+	var place
+	for offset in board_offsets:
 		var board_position = board.global_position + offset
 		var distance = tile.global_position.distance_to(board_position)
 		
 		if distance < closest_distance:
 			closest_distance = distance
 			closest_position = board_position
+			place = board_offsets.find(offset)
 	
-	print(closest_distance)
-	if closest_distance < 40:
+	# check space not taken
+	if closest_distance < 40 and not tile_positions.values().has(place):
 		tile.global_position = closest_position
+		remove_from_word(tile)
+		scan_word = scan_word.substr(0, place) + tile.text[0] + scan_word.substr(place + 1)
+		tile_positions[tile] = place
+			
 	else:
+		remove_from_word(tile)
 		return_tile_to_holder(tile)
 		
 func return_tile_to_holder(tile):
@@ -100,3 +98,34 @@ func return_tile_to_holder(tile):
 		if on_holder[index] == tile:
 			tile.global_position = tile_holder_offsets[index] + $TileHolder.global_position
 			return
+			
+func remove_from_word(tile):
+	if tile in tile_positions:
+		var old_place = tile_positions[tile]
+		scan_word = scan_word.substr(0, old_place) + "_" + scan_word.substr(old_place + 1)
+		tile_positions.erase(tile)
+		
+# doesn't work with the star random symbols
+func check_word_button_pressed():
+	print("scan word before: " + scan_word)
+	
+	var word = remove_trailing_underscores(scan_word)
+	print("scan word after: " + word)
+	
+	if word.contains("_") or word == "":
+		print("No word detected")
+	else:
+		var result = Wordish.get_wordish(word)
+		var type = result[0]
+		var score = result[1]
+		print_wordish(word, type, score)
+		
+	
+func remove_trailing_underscores(word: String) -> String:
+	while word.begins_with("_"):
+		word = word.substr(1)
+	
+	while word.ends_with("_"):
+		word = word.substr(0, word.length() - 1)
+	
+	return word

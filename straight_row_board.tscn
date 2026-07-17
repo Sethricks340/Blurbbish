@@ -14,60 +14,66 @@ border_color = Color(0, 0, 0, 1)
 script = ExtResource("1_1mx8x")
 
 [node name="straight_row1" type="Panel" parent="."]
-offset_left = 450.0
-offset_right = 500.0
+offset_right = 50.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
-[node name="straight_row9" type="Panel" parent="."]
+[node name="straight_row2" type="Panel" parent="."]
 offset_left = 50.0
 offset_right = 100.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
-[node name="straight_row8" type="Panel" parent="."]
+[node name="straight_row3" type="Panel" parent="."]
 offset_left = 100.0
 offset_right = 150.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
-[node name="straight_row7" type="Panel" parent="."]
+[node name="straight_row4" type="Panel" parent="."]
 offset_left = 150.0
 offset_right = 200.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
-[node name="straight_row6" type="Panel" parent="."]
+[node name="straight_row5" type="Panel" parent="."]
 offset_left = 200.0
 offset_right = 250.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
-[node name="straight_row2" type="Panel" parent="."]
-offset_left = 400.0
-offset_right = 450.0
-offset_bottom = 50.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
-
-[node name="straight_row4" type="Panel" parent="."]
-offset_left = 300.0
-offset_right = 350.0
-offset_bottom = 50.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
-
-[node name="straight_row5" type="Panel" parent="."]
+[node name="straight_row6" type="Panel" parent="."]
 offset_left = 250.0
 offset_right = 300.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
-[node name="straight_row3" type="Panel" parent="."]
+[node name="straight_row7" type="Panel" parent="."]
+offset_left = 300.0
+offset_right = 350.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
+
+[node name="straight_row8" type="Panel" parent="."]
 offset_left = 350.0
 offset_right = 400.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
 
+[node name="straight_row9" type="Panel" parent="."]
+offset_left = 400.0
+offset_right = 450.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
+
 [node name="straight_row10" type="Panel" parent="."]
-offset_right = 50.0
+offset_left = 450.0
+offset_right = 500.0
+offset_bottom = 50.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
+
+[node name="straight_row11" type="Panel" parent="."]
+offset_left = 150.0
+offset_right = 200.0
 offset_bottom = 50.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8vo5v")
