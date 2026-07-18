@@ -21,13 +21,15 @@ var subscripts = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈",
 var board
 var straight_row_board_scene = preload("res://straight_row_board.tscn")
 var tile_holder_offsets = [
+	Vector2(-245, -47), 
 	Vector2(-190, -47), 
 	Vector2(-135, -47), 
 	Vector2(-80, -47), 
 	Vector2(-25, -47), 
 	Vector2(30, -47), 
 	Vector2(85, -47), 
-	Vector2(140, -47)
+	Vector2(140, -47),
+	Vector2(195, -47)
 ]
 var on_holder = {}
 var scan_word = "__________"
@@ -42,7 +44,7 @@ func _ready():
 	
 	$"Check Word Button".pressed.connect(check_word_button_pressed)
 	
-	for i in range(0, 7):
+	for i in range(0, 9):
 		var random_letter = draw_bag.pick_random()
 		on_holder[i]  = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
 	

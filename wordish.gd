@@ -234,10 +234,14 @@ func zword_score(word: String):
 	if word.replace("z", "g") in word_definitions:
 		return 0
 
+	# Replace z with "s"
+	if word.replace("z", "s") in word_definitions:
+		return 0
+	
 	# Remove z's and check if the base word exists
 	var no_z = word.replace("z", "")
 	if no_z != word and no_z in word_definitions:
-		return 0
+		return 0	
 
 	return 100
 	
