@@ -65,3 +65,13 @@ offset_right = 360.0
 offset_bottom = 232.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Draw Bag:"
+
+[node name="Timer Label" type="Label" parent="."]
+offset_left = 704.0
+offset_top = 128.0
+offset_right = 800.0
+offset_bottom = 216.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Time Left: "
+
+[node name="Game Timer" type="Timer" parent="."]

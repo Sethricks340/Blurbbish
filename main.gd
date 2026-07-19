@@ -15,7 +15,8 @@ var draw_bag: Array[String] = [
 	"H₄","I₁","I₁","I₁","I₁","J₇","K₅","L₁","L₁","L₁","L₁","M₃","M₃",
 	"N₁","N₁","N₁","N₁","O₁","O₁","O₁","O₁","P₃","P₃","Q₇","R₁","R₁",
 	"R₁","R₁","S₁","S₁","S₁","S₁","T₁","T₁","T₁","T₁","U₁","U₁","V₄",
-	"W₄","X₇","Y₄","Z₇","★₉","★₉","☆₉","☆₉"
+	"W₄","X₇","Y₄","Z₇",
+	#"★₉","★₉","☆₉","☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
 ]
 
 var random_vowels: Array[String] = ["a", "e", "i", "o", "u", "y"]
@@ -50,8 +51,13 @@ var points = 0
 var real_word_mult = 1
 var blurbbish_word_mult = 3
 var new_word_mult = 5
+var game_finished = false
 
 func _ready():
+	$"Game Timer".wait_time = 60
+	$"Game Timer".one_shot = true
+	$"Game Timer".start()
+	$"Game Timer".timeout.connect(timer_finished)
 	$"Draw Bag Number".text = "Draw Bag: %s" %draw_bag.size()
 	$"Points Label".text = "Points: %s" %points 	
 	$"Result Label".text = "Word: \nType: \nRating: \nPoints: "
@@ -65,26 +71,55 @@ func _ready():
 	fill_holder()
 	
 func _process(delta):
-	#print(scan_word)
-	#print(scan_points)
-	#print(draw_bag.size())	
-	#print(on_holder)
-	pass
+	if not game_finished:
+		$"Timer Label".text = "Time: %d" % ceil($"Game Timer".time_left)
+	
+func timer_finished():
+	game_finished = true
+	$"Timer Label".text = "Time: 0"
+	$"Result Label".text = "Time's Up!\nFinal Score: %s" % points
+	$"Check Word Button".disabled = true
 	
 func _input(event):
+	if game_finished:
+		return
+		
 	if event is InputEventKey and event.pressed and not event.echo:
 		
-		# Enter checks word
-		if event.keycode == KEY_ENTER:
+		if event.keycode == KEY_ENTER or event.keycode == KEY_KP_ENTER:
 			check_word_button_pressed()
+			get_viewport().set_input_as_handled()
 			return
 		
-		# Convert key to lowercase letter
+		if event.keycode == KEY_BACKSPACE:
+			remove_last_letter()
+			get_viewport().set_input_as_handled()
+			return
+		
 		var typed_letter = char(event.unicode).to_lower()
 		
 		if typed_letter.length() == 1 and typed_letter in letters:
 			add_typed_letter(typed_letter)
+			get_viewport().set_input_as_handled()
 
+func remove_last_letter():
+	if tile_positions.is_empty():
+		return
+	
+	# Find the rightmost tile
+	var rightmost_tile = null
+	var rightmost_position = -1
+	
+	for tile in tile_positions:
+		var position = tile_positions[tile]
+		
+		if position > rightmost_position:
+			rightmost_position = position
+			rightmost_tile = tile
+	
+	if rightmost_tile:
+		remove_from_word(rightmost_tile)
+		return_tile_to_holder(rightmost_tile)
 
 func add_typed_letter(letter: String):
 	# Find matching tile in holder
