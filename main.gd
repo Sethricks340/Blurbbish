@@ -9,7 +9,9 @@ extends Node2D
 	#"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
 #]
 
-var draw_bag: Array[String] = [
+var draw_bag: Array[String] 
+
+var draw_bag_original: Array[String] = [
 	"A₁","A₁","A₁","A₁","A₁","A₁","B₃","B₃","C₃","C₃","D₂","D₂","D₂","D₂",
 	"E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","F₄","G₂","G₂","G₂",
 	"H₄","I₁","I₁","I₁","I₁","J₇","K₅","L₁","L₁","L₁","L₁","M₃","M₃",
@@ -17,15 +19,18 @@ var draw_bag: Array[String] = [
 	"R₁","R₁","S₁","S₁","S₁","S₁","T₁","T₁","T₁","T₁","U₁","U₁","V₄",
 	"W₄","X₇","Y₄","Z₇",
 	#"★₉","★₉","☆₉","☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
-]
+	]
+
+var on_holder 
+var scan_word 
+var scan_points 
+var game_finished 
+var tile_positions 
 
 var random_vowels: Array[String] = ["a", "e", "i", "o", "u", "y"]
 var random_consonants: Array[String] = [
 	"b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z"
 ]
-var discard_bag: Array[String] = []
-var player1_hand: Array[String] = []
-var player2_hand: Array[String] = []
 var letter_scene = preload("res://letter_tile.tscn")
 var letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 var subscripts_dict = {"₀": 0, "₁": 1, "₂": 2, "₃": 3, "₄": 4, "₅": 5, "₆": 6, "₇": 7, "₈": 8, "₉": 9}
@@ -42,31 +47,40 @@ var tile_holder_offsets = [
 	Vector2(140, -47),
 	Vector2(195, -47)
 ]
-var on_holder = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 }
-var scan_word = "__________"
-var scan_points = "++++++++++"
-var tile_positions = {}
 var board_offsets = []
 var points = 0
 var real_word_mult = 1
 var blurbbish_word_mult = 3
 var new_word_mult = 5
-var game_finished = false
+var high_score = - INF
+var timer_time = 60
 
 func _ready():
-	$"Game Timer".wait_time = 60
+	draw_bag = draw_bag_original.duplicate()
+
+	on_holder = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 }
+	scan_word = "__________"
+	scan_points = "++++++++++"
+	game_finished = false
+	tile_positions = {}
+		
+	
+	$"Game Timer".wait_time = timer_time
 	$"Game Timer".one_shot = true
 	$"Game Timer".start()
 	$"Game Timer".timeout.connect(timer_finished)
 	$"Draw Bag Number".text = "Draw Bag: %s" %draw_bag.size()
 	$"Points Label".text = "Points: %s" %points 	
 	$"Result Label".text = "Word: \nType: \nRating: \nPoints: "
+	$"High Score".text = "High Score: 0"
 	
 	make_board(straight_row_board_scene, Vector2(250,250))
 	board_offsets = board.get_tile_offsets()
 	draw_bag.shuffle()
 	
 	$"Check Word Button".pressed.connect(check_word_button_pressed)
+	$"Play Again Button".pressed.connect(restart_game)
+	$"Play Again Button".disabled = true
 	
 	fill_holder()
 	
@@ -75,10 +89,7 @@ func _process(delta):
 		$"Timer Label".text = "Time: %d" % ceil($"Game Timer".time_left)
 	
 func timer_finished():
-	game_finished = true
-	$"Timer Label".text = "Time: 0"
-	$"Result Label".text = "Time's Up!\nFinal Score: %s" % points
-	$"Check Word Button".disabled = true
+	end_game("Time's Up!")
 	
 func _input(event):
 	if game_finished:
@@ -180,8 +191,7 @@ func fill_holder():
 	$"Draw Bag Number".text = "Draw Bag: %s" % draw_bag.size()
 
 	if game_over():
-		$"Result Label".text = "Game Over"
-		$"Check Word Button".disabled = true
+		end_game("Game Over")
 	
 func create_letter_tile(text_value: String, postion: Vector2):
 	var new_tile = letter_scene.instantiate()
@@ -324,3 +334,47 @@ func game_over() -> bool:
 		return false
 
 	return true
+	
+func end_game(message: String):
+	if game_finished:
+		return
+
+	game_finished = true
+	$"Game Timer".stop()
+	$"Timer Label".text = "Time: 0"
+	$"Result Label".text = "%s\nFinal Score: %d" % [message, points]
+	$"Check Word Button".disabled = true
+
+	high_score = max(high_score, points)
+	$"High Score".text = "High Score: %d" % high_score
+	
+	$"Play Again Button".disabled = false
+
+func restart_game():
+	# Remove existing holder tiles
+	for tile in on_holder.values():
+		if tile:
+			tile.queue_free()
+
+	clear_board()
+
+	draw_bag = draw_bag_original.duplicate()
+	draw_bag.shuffle()
+
+	on_holder = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}
+	scan_word = "__________"
+	scan_points = "++++++++++"
+	tile_positions = {}
+	points = 0
+	game_finished = false
+
+	$"Points Label".text = "Points: 0"
+	$"Result Label".text = "Word:\nType:\nRating:\nPoints:"
+	$"Draw Bag Number".text = "Draw Bag: %d" % draw_bag.size()
+
+	$"Check Word Button".disabled = false
+	$"Play Again Button".disabled = true
+
+	$"Game Timer".start(timer_time)
+
+	fill_holder()

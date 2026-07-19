@@ -248,8 +248,8 @@ func zword_score(word: String):
 func wordish_score(word: String):
 	# Combine gram-based evidence and penalties into a single score
 
-	if not zword_score(word):
-		return 0
+	#if not zword_score(word):
+		#return 0
 
 	var result = get_gram_scores(word)
 
