@@ -1,13 +1,23 @@
 extends Node2D
 
-var draw_bag: Array[String] = [ # "LetterPoints"
-	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
-	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
-	"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₇",	
-	"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₇",
-	"B₇","C₇","D₇","F₇","G₇","H₇","J₇","K₇","L₇","M₇","N₇","P₇","Q₇","R₇","S₇","T₇","V₇","W₇","X₇","Y₇","Z₇",
-	"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
+#var draw_bag: Array[String] = [ # "LetterPoints"
+	#"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
+	#"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
+	#"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₇",	
+	#"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₇",
+	#"B₇","C₇","D₇","F₇","G₇","H₇","J₇","K₇","L₇","M₇","N₇","P₇","Q₇","R₇","S₇","T₇","V₇","W₇","X₇","Y₇","Z₇",
+	#"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
+#]
+
+var draw_bag: Array[String] = [
+	"A₁","A₁","A₁","A₁","A₁","A₁","B₃","B₃","C₃","C₃","D₂","D₂","D₂","D₂",
+	"E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","F₄","G₂","G₂","G₂",
+	"H₄","I₁","I₁","I₁","I₁","J₇","K₅","L₁","L₁","L₁","L₁","M₃","M₃",
+	"N₁","N₁","N₁","N₁","O₁","O₁","O₁","O₁","P₃","P₃","Q₇","R₁","R₁",
+	"R₁","R₁","S₁","S₁","S₁","S₁","T₁","T₁","T₁","T₁","U₁","U₁","V₄",
+	"W₄","X₇","Y₄","Z₇","★₉","★₉","☆₉","☆₉"
 ]
+
 var random_vowels: Array[String] = ["a", "e", "i", "o", "u", "y"]
 var random_consonants: Array[String] = [
 	"b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z"
@@ -37,8 +47,15 @@ var scan_points = "++++++++++"
 var tile_positions = {}
 var board_offsets = []
 var points = 0
+var real_word_mult = 1
+var blurbbish_word_mult = 3
+var new_word_mult = 5
 
 func _ready():
+	$"Draw Bag Number".text = "Draw Bag: %s" %draw_bag.size()
+	$"Points Label".text = "Points: %s" %points 	
+	$"Result Label".text = "Word: \nType: \nRating: \nPoints: "
+	
 	make_board(straight_row_board_scene, Vector2(250,250))
 	board_offsets = board.get_tile_offsets()
 	draw_bag.shuffle()
@@ -50,16 +67,25 @@ func _ready():
 func _process(delta):
 	#print(scan_word)
 	#print(scan_points)
-	print(draw_bag.size())	
+	#print(draw_bag.size())	
 	#print(on_holder)
 	pass
 	
 func fill_holder():
-	for i in range(0, 9):
-		var random_letter = draw_bag.pick_random()
+	for i in range(9):
+		if draw_bag.is_empty():
+			break
+
 		if not on_holder[i]:
-			on_holder[i]  = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
+			var random_letter = draw_bag.pick_random()
+			on_holder[i] = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
 			draw_bag.erase(random_letter)
+
+	$"Draw Bag Number".text = "Draw Bag: %s" % draw_bag.size()
+
+	if game_over():
+		$"Result Label".text = "Game Over"
+		$"Check Word Button".disabled = true
 	
 func create_letter_tile(text_value: String, postion: Vector2):
 	var new_tile = letter_scene.instantiate()
@@ -75,7 +101,6 @@ func make_board(board_scene: PackedScene, position: Vector2):
 	add_child(board)
 
 func tile_released(tile):
-	$"Result Label".text = "Score: "
 	var closest_distance = INF
 	var closest_position = null
 	
@@ -92,7 +117,10 @@ func tile_released(tile):
 	# check space not taken
 	if closest_distance < 40 and not tile_positions.values().has(place):
 		tile.global_position = closest_position
-		remove_from_word(tile)
+		remove_from_word(tile)	
+		# Convert random tiles into permanent letters
+		convert_star_tile(tile)
+
 		scan_word = scan_word.substr(0, place) + tile.text[0] + scan_word.substr(place + 1)
 		scan_points = scan_points.substr(0, place) + tile.text[1] + scan_points.substr(place + 1)
 		tile_positions[tile] = place
@@ -140,32 +168,39 @@ func check_word_button_pressed():
 			var type_dict = {0: "Real", 1: "Blurbbish", 2: "New"}
 			var type = type_dict[result[0]]
 			var score = result[1]
-			$"Result Label".text = "Word: %s\nType: %s\nRating: %.2f%%" % [word, type, score]
-			if not result[0]: #Real word
+			var word_points = 0
+			
+			if result[0] == 0: #Real word
 				for number in numbers:
-					points += subscripts_dict[number]
+					word_points += subscripts_dict[number]
+				points *= real_word_mult
+				points += word_points
+				
 			elif result[0] == 1: #Blurbbish word
 				for number in numbers:
-					points += subscripts_dict[number]
-				points *= 2
+					word_points += subscripts_dict[number]
+				word_points *= blurbbish_word_mult
+				points += word_points
+				
 			else: #New word
 				if score >= 50:
 					for number in numbers:
 						# give poitns if the word passed
-						points += int(subscripts_dict[number] * 3 * (score / 100))
+						word_points += int(subscripts_dict[number] * new_word_mult * (score / 100))
 				else:
 					for number in numbers:
 						# take away points if the word didn't pass
-						points -= int(subscripts_dict[number] * 3 * (1 - (score / 100)))
+						word_points += -int(subscripts_dict[number] * new_word_mult * (1 - (score / 100)))
+				points += word_points
 				
-			$"Points Label".text = "Points: %s" %points 
+			$"Result Label".text = "Word: %s\nType: %s\nRating: %.2f%%\nPoints: %s" % [word, type, score, word_points]
+			$"Points Label".text = "Points: %s" % points
 			clear_board()
 			fill_holder()
 		else:
 			$"Result Label".text = "Must be longer than one letter"
 			clear_board()
-			fill_holder()
-			
+			fill_holder()		
 		
 func remove_trailing_symbol(word: String, symbol: String) -> String:
 	while word.begins_with(symbol):
@@ -175,3 +210,22 @@ func remove_trailing_symbol(word: String, symbol: String) -> String:
 		word = word.substr(0, word.length() - 1)
 	
 	return word
+	
+func convert_star_tile(tile):
+	if tile.text[0] == "★":
+		tile.text = random_consonants.pick_random().to_upper() + "₉"
+	elif tile.text[0] == "☆":
+		tile.text = random_vowels.pick_random().to_upper() + "₉"
+	
+func game_over() -> bool:
+	if not draw_bag.is_empty():
+		return false
+
+	for tile in on_holder.values():
+		if tile:
+			return false
+
+	if not tile_positions.is_empty():
+		return false
+
+	return true
