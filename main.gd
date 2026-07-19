@@ -71,6 +71,67 @@ func _process(delta):
 	#print(on_holder)
 	pass
 	
+func _input(event):
+	if event is InputEventKey and event.pressed and not event.echo:
+		
+		# Enter checks word
+		if event.keycode == KEY_ENTER:
+			check_word_button_pressed()
+			return
+		
+		# Convert key to lowercase letter
+		var typed_letter = char(event.unicode).to_lower()
+		
+		if typed_letter.length() == 1 and typed_letter in letters:
+			add_typed_letter(typed_letter)
+
+
+func add_typed_letter(letter: String):
+	# Find matching tile in holder
+	var found_tile = null
+	var holder_index = null
+	
+	for index in on_holder:
+		var tile = on_holder[index]
+		
+		if tile:
+			var tile_letter = tile.text[0].to_lower()
+			
+			if tile_letter == letter:
+				found_tile = tile
+				holder_index = index
+				break
+	
+	# No matching tile
+	if found_tile == null:
+		return
+	
+	# Find first empty board spot
+	var board_place = -1
+	
+	for i in range(board_offsets.size()):
+		if not tile_positions.values().has(i):
+			board_place = i
+			break
+	
+	# Board full
+	if board_place == -1:
+		return
+	
+	# Move tile to board
+	found_tile.global_position = board.global_position + board_offsets[board_place]
+	
+	remove_from_word(found_tile)
+	convert_star_tile(found_tile)
+	
+	scan_word = scan_word.substr(0, board_place) + found_tile.text[0] + scan_word.substr(board_place + 1)
+	scan_points = scan_points.substr(0, board_place) + found_tile.text[1] + scan_points.substr(board_place + 1)
+	
+	tile_positions[found_tile] = board_place
+	
+	# Remove from holder
+	on_holder[holder_index] = 0
+	
 func fill_holder():
 	for i in range(9):
 		if draw_bag.is_empty():
@@ -154,7 +215,6 @@ func remove_from_word(tile):
 		scan_points = scan_points.substr(0, old_place) + "+" + scan_points.substr(old_place + 1)
 		tile_positions.erase(tile)
 		
-# doesn't work with the star random symbols
 func check_word_button_pressed():
 	
 	var word = remove_trailing_symbol(scan_word, "_")
