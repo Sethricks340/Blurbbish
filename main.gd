@@ -3,8 +3,8 @@ extends Node2D
 var draw_bag: Array[String] = [ # "LetterPoints"
 	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
 	"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
-	"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₁",	
-	"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₄",
+	"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₇",	
+	"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₇",
 	"B₇","C₇","D₇","F₇","G₇","H₇","J₇","K₇","L₇","M₇","N₇","P₇","Q₇","R₇","S₇","T₇","V₇","W₇","X₇","Y₇","Z₇",
 	"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
 ]
@@ -17,7 +17,7 @@ var player1_hand: Array[String] = []
 var player2_hand: Array[String] = []
 var letter_scene = preload("res://letter_tile.tscn")
 var letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-var subscripts = ["₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"]
+var subscripts_dict = {"₀": 0, "₁": 1, "₂": 2, "₃": 3, "₄": 4, "₅": 5, "₆": 6, "₇": 7, "₈": 8, "₉": 9}
 var board
 var straight_row_board_scene = preload("res://straight_row_board.tscn")
 var tile_holder_offsets = [
@@ -31,26 +31,35 @@ var tile_holder_offsets = [
 	Vector2(140, -47),
 	Vector2(195, -47)
 ]
-var on_holder = {}
+var on_holder = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 }
 var scan_word = "__________"
+var scan_points = "++++++++++"
 var tile_positions = {}
 var board_offsets = []
+var points = 0
 
 func _ready():
-	
 	make_board(straight_row_board_scene, Vector2(250,250))
 	board_offsets = board.get_tile_offsets()
 	draw_bag.shuffle()
 	
 	$"Check Word Button".pressed.connect(check_word_button_pressed)
 	
-	for i in range(0, 9):
-		var random_letter = draw_bag.pick_random()
-		on_holder[i]  = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
+	fill_holder()
 	
 func _process(delta):
 	#print(scan_word)
+	#print(scan_points)
+	print(draw_bag.size())	
+	#print(on_holder)
 	pass
+	
+func fill_holder():
+	for i in range(0, 9):
+		var random_letter = draw_bag.pick_random()
+		if not on_holder[i]:
+			on_holder[i]  = create_letter_tile(random_letter, tile_holder_offsets[i] + $TileHolder.position)
+			draw_bag.erase(random_letter)
 	
 func create_letter_tile(text_value: String, postion: Vector2):
 	var new_tile = letter_scene.instantiate()
@@ -64,12 +73,6 @@ func make_board(board_scene: PackedScene, position: Vector2):
 	board = board_scene.instantiate()
 	board.position = position
 	add_child(board)
-
-func print_wordish(word: String, type: int, score: float):
-
-	print("Word: ", word)
-	print("Type: ", type)
-	print("Score: ", score)
 
 func tile_released(tile):
 	$"Result Label".text = "Score: "
@@ -91,15 +94,28 @@ func tile_released(tile):
 		tile.global_position = closest_position
 		remove_from_word(tile)
 		scan_word = scan_word.substr(0, place) + tile.text[0] + scan_word.substr(place + 1)
+		scan_points = scan_points.substr(0, place) + tile.text[1] + scan_points.substr(place + 1)
 		tile_positions[tile] = place
+		var holder_index = on_holder.find_key(tile)
+		if holder_index != null:
+			on_holder[holder_index] = 0
 			
 	else:
 		remove_from_word(tile)
 		return_tile_to_holder(tile)
 		
+func clear_board():
+	for tile in tile_positions.keys():
+		tile.queue_free()
+	
+	tile_positions.clear()
+	scan_word = "__________"
+	scan_points = "++++++++++"
+	
 func return_tile_to_holder(tile):
 	for index in on_holder:
-		if on_holder[index] == tile:
+		if not on_holder[index] or on_holder[index] == tile:
+			on_holder[index] = tile
 			tile.global_position = tile_holder_offsets[index] + $TileHolder.global_position
 			return
 			
@@ -107,28 +123,55 @@ func remove_from_word(tile):
 	if tile in tile_positions:
 		var old_place = tile_positions[tile]
 		scan_word = scan_word.substr(0, old_place) + "_" + scan_word.substr(old_place + 1)
+		scan_points = scan_points.substr(0, old_place) + "+" + scan_points.substr(old_place + 1)
 		tile_positions.erase(tile)
 		
 # doesn't work with the star random symbols
 func check_word_button_pressed():
 	
-	var word = remove_trailing_underscores(scan_word)
+	var word = remove_trailing_symbol(scan_word, "_")
+	var numbers = remove_trailing_symbol(scan_points, "+")
 	
 	if word.contains("_") or word == "":
 		$"Result Label".text = "No word detected"
 	else:
-		var result = Wordish.get_wordish(word)
-		var type = result[0]
-		var score = result[1]
-		$"Result Label".text = "Score: %.2f%%" % score
+		if not (word.length() == 1):
+			var result = Wordish.get_wordish(word)
+			var type_dict = {0: "Real", 1: "Blurbbish", 2: "New"}
+			var type = type_dict[result[0]]
+			var score = result[1]
+			$"Result Label".text = "Word: %s\nType: %s\nRating: %.2f%%" % [word, type, score]
+			if not result[0]: #Real word
+				for number in numbers:
+					points += subscripts_dict[number]
+			elif result[0] == 1: #Blurbbish word
+				for number in numbers:
+					points += subscripts_dict[number]
+				points *= 2
+			else: #New word
+				if score >= 50:
+					for number in numbers:
+						# give poitns if the word passed
+						points += int(subscripts_dict[number] * 3 * (score / 100))
+				else:
+					for number in numbers:
+						# take away points if the word didn't pass
+						points -= int(subscripts_dict[number] * 3 * (1 - (score / 100)))
+				
+			$"Points Label".text = "Points: %s" %points 
+			clear_board()
+			fill_holder()
+		else:
+			$"Result Label".text = "Must be longer than one letter"
+			clear_board()
+			fill_holder()
+			
 		
-		#print_wordish(word, type, score)
-	
-func remove_trailing_underscores(word: String) -> String:
-	while word.begins_with("_"):
+func remove_trailing_symbol(word: String, symbol: String) -> String:
+	while word.begins_with(symbol):
 		word = word.substr(1)
 	
-	while word.ends_with("_"):
+	while word.ends_with(symbol):
 		word = word.substr(0, word.length() - 1)
 	
 	return word
