@@ -4,7 +4,7 @@ var max_counts = [40163, 15754, 6764, 4796] # er, ing, tion, ation are the patte
 var gram_weights = [5, 9, 5, 2] # bigram, trigram, quadgram, quintgram
 
 var word_definitions = {}
-var blurbbinary = {}
+var blurbbish_dictionary = {}
 var test_words = {}
 var grams_dict = {}
 
@@ -17,9 +17,9 @@ func load_data():
 	word_definitions = JSON.parse_string(english_file.get_as_text())
 	english_file.close()
 
-	var blurbbinary_file = FileAccess.open("res://Data/blurbbinary.json", FileAccess.READ)
-	blurbbinary = JSON.parse_string(blurbbinary_file.get_as_text())
-	blurbbinary_file.close()
+	var blurbbish_dictionary_file = FileAccess.open("res://Data/blurbbish_dictionary.json", FileAccess.READ)
+	blurbbish_dictionary = JSON.parse_string(blurbbish_dictionary_file.get_as_text())
+	blurbbish_dictionary_file.close()
 
 	var test_words_file = FileAccess.open("res://Data/test_words.json", FileAccess.READ)
 	test_words = JSON.parse_string(test_words_file.get_as_text())
@@ -284,7 +284,7 @@ func get_wordish(word: String):
 	if word_definitions.has(word):
 		return [0, 0]
 
-	if blurbbinary.has(word):
+	if blurbbish_dictionary.has(word):
 		return [1, 0]
 
 	return [2, wordish_score(word)]

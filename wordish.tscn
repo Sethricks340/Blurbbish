@@ -36,9 +36,9 @@ texture = ExtResource("2_fdh1f")
 
 [node name="Play Again Button" type="Button" parent="."]
 offset_left = 944.0
-offset_top = 248.0
+offset_top = 258.0
 offset_right = 1043.0
-offset_bottom = 279.0
+offset_bottom = 289.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_pdwjd")
 text = "Play Again"
 
@@ -50,43 +50,51 @@ offset_bottom = 290.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_pdwjd")
 text = "Check word"
 
+[node name="Game Over Label" type="Label" parent="."]
+offset_left = 816.0
+offset_top = 488.0
+offset_right = 912.0
+offset_bottom = 576.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Score: "
+
 [node name="Result Label" type="Label" parent="."]
-offset_left = 864.0
-offset_top = 352.0
-offset_right = 960.0
-offset_bottom = 440.0
+offset_left = 1000.0
+offset_top = 128.0
+offset_right = 1096.0
+offset_bottom = 216.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Score: "
 
 [node name="Points Label" type="Label" parent="."]
-offset_left = 512.0
+offset_left = 505.0
 offset_top = 128.0
-offset_right = 608.0
+offset_right = 601.0
 offset_bottom = 216.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Points: "
 
 [node name="Draw Bag Number" type="Label" parent="."]
 offset_left = 264.0
-offset_top = 144.0
+offset_top = 128.0
 offset_right = 360.0
-offset_bottom = 232.0
+offset_bottom = 216.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Draw Bag:"
 
 [node name="Timer Label" type="Label" parent="."]
-offset_left = 704.0
+offset_left = 675.0
 offset_top = 128.0
-offset_right = 800.0
+offset_right = 771.0
 offset_bottom = 216.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Time Left: "
 
 [node name="High Score" type="Label" parent="."]
-offset_left = 872.0
-offset_top = 72.0
-offset_right = 968.0
-offset_bottom = 160.0
+offset_left = 842.0
+offset_top = 128.0
+offset_right = 938.0
+offset_bottom = 216.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Highscore: "
 

@@ -1,17 +1,9 @@
 extends Node2D
 
-#var draw_bag: Array[String] = [ # "LetterPoints"
-	#"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
-	#"A₁","A₂","A₃","A₄","E₁","E₂","E₃","E₄","I₁","I₂","I₃","I₄","O₁","O₂","O₃","O₄","U₁","U₂","U₃","U₄",
-	#"B₁","C₁","D₁","F₁","G₁","H₁","J₁","K₁","L₁","M₁","N₁","P₁","Q₁","R₁","S₁","T₁","V₁","W₁","X₁","Y₁","Z₇",	
-	#"B₄","C₄","D₄","F₄","G₄","H₄","J₄","K₄","L₄","M₄","N₄","P₄","Q₄","R₄","S₄","T₄","V₄","W₄","X₄","Y₄","Z₇",
-	#"B₇","C₇","D₇","F₇","G₇","H₇","J₇","K₇","L₇","M₇","N₇","P₇","Q₇","R₇","S₇","T₇","V₇","W₇","X₇","Y₇","Z₇",
-	#"★₉", "★₉", "☆₉", "☆₉" # random vowel (☆₉, includes Y) 9 points, random consonant ("★₉", includes Y) 9 points
-#]
-
 var draw_bag: Array[String] 
 
 var draw_bag_original: Array[String] = [
+	#"B₁","L₁","U₁","R₁","B₁","B₁","I₁","S₁","H₁",
 	"A₁","A₁","A₁","A₁","A₁","A₁","B₃","B₃","C₃","C₃","D₂","D₂","D₂","D₂",
 	"E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","E₁","F₄","G₂","G₂","G₂",
 	"H₄","I₁","I₁","I₁","I₁","J₇","K₅","L₁","L₁","L₁","L₁","M₃","M₃",
@@ -54,8 +46,11 @@ var blurbbish_word_mult = 3
 var new_word_mult = 5
 var high_score = - INF
 var timer_time = 60
+var blurbbish_dict = {}
+var new_words = []
 
 func _ready():
+	load_blurbbish()
 	draw_bag = draw_bag_original.duplicate()
 
 	on_holder = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 }
@@ -73,6 +68,7 @@ func _ready():
 	$"Points Label".text = "Points: %s" %points 	
 	$"Result Label".text = "Word: \nType: \nRating: \nPoints: "
 	$"High Score".text = "High Score: 0"
+	$"Game Over Label".text = ""
 	
 	make_board(straight_row_board_scene, Vector2(250,250))
 	board_offsets = board.get_tile_offsets()
@@ -87,6 +83,22 @@ func _ready():
 func _process(delta):
 	if not game_finished:
 		$"Timer Label".text = "Time: %d" % ceil($"Game Timer".time_left)
+	
+func load_blurbbish():
+	var file = FileAccess.open("res://Data/blurbbish_dictionary.json", FileAccess.READ)
+	blurbbish_dict = JSON.parse_string(file.get_as_text())
+	file.close()
+		
+func add_blurbbish_word(word: String):
+	if not blurbbish_dict.has(word):
+		blurbbish_dict[word] = ["A word created by a player"]
+
+		save_blurbbish()
+		
+func save_blurbbish():
+	var file = FileAccess.open("res://Data/blurbbish_dictionary.json", FileAccess.WRITE)
+	file.store_string(JSON.stringify(blurbbish_dict, "\t"))
+	file.close()
 	
 func timer_finished():
 	end_game("Time's Up!")
@@ -292,6 +304,7 @@ func check_word_button_pressed():
 					for number in numbers:
 						# give poitns if the word passed
 						word_points += int(subscripts_dict[number] * new_word_mult * (score / 100))
+						new_words.append(word)
 				else:
 					for number in numbers:
 						# take away points if the word didn't pass
@@ -342,13 +355,17 @@ func end_game(message: String):
 	game_finished = true
 	$"Game Timer".stop()
 	$"Timer Label".text = "Time: 0"
-	$"Result Label".text = "%s\nFinal Score: %d" % [message, points]
+	$"Game Over Label".text = "%s\nFinal Score: %d" % [message, points]
 	$"Check Word Button".disabled = true
 
 	high_score = max(high_score, points)
 	$"High Score".text = "High Score: %d" % high_score
 	
 	$"Play Again Button".disabled = false
+	
+	for word in new_words:
+		add_blurbbish_word(word)
+	new_words.clear()
 
 func restart_game():
 	# Remove existing holder tiles
@@ -374,6 +391,7 @@ func restart_game():
 
 	$"Check Word Button".disabled = false
 	$"Play Again Button".disabled = true
+	$"Game Over Label".text = ""
 
 	$"Game Timer".start(timer_time)
 
