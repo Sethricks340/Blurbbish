@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwvvwrifasxos"
-path="res://.godot/imported/Blurbbish.icon.png-d96f96c8058d308594ddab1cc946361a.ctex"
+uid="uid://cgnpkvvctmvy8"
+path="res://.godot/imported/Blurbbish.png-aff58c0425d126cb242cdb256e721697.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://web_exec/Blurbbish.icon.png"
-dest_files=["res://.godot/imported/Blurbbish.icon.png-d96f96c8058d308594ddab1cc946361a.ctex"]
+source_file="res://Blurbbish.png"
+dest_files=["res://.godot/imported/Blurbbish.png-aff58c0425d126cb242cdb256e721697.ctex"]
 
 [params]
 
