@@ -70,7 +70,7 @@ func _ready():
 	$"High Score".text = "High Score: 0"
 	$"Game Over Label".text = ""
 	
-	make_board(straight_row_board_scene, Vector2(250,250))
+	make_board(straight_row_board_scene, Vector2(730,550))
 	board_offsets = board.get_tile_offsets()
 	draw_bag.shuffle()
 	

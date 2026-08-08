@@ -23,6 +23,10 @@ config/icon="res://icon.svg"
 
 Wordish="*res://wordish.gd"
 
+[display]
+
+window/size/mode=3
+
 [dotnet]
 
 project/assembly_name="Blurbby"
